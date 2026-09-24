@@ -39,6 +39,10 @@ export function QuizCard({ quiz, preload = false }: { quiz: Quiz; preload?: bool
               <span className="tabular-nums">{formatNumber(quiz.likeCount)}</span>
               <span className="sr-only">beğeni</span>
             </span>
+            <span className="ml-auto min-w-0 truncate" title={`Oluşturan: ${quiz.creatorName}`}>
+              <span className="sr-only">Oluşturan: </span>
+              {quiz.creatorName}
+            </span>
           </p>
         </div>
       </Link>
