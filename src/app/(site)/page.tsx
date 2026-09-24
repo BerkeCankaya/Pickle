@@ -103,7 +103,7 @@ export default async function HomePage(props: PageProps<"/">) {
       </div>
 
       {quizzes.length > 0 ? (
-        <ul className="grid gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-x-4 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {quizzes.map((quiz, index) => (
             <li key={quiz.id}>
               <QuizCard quiz={quiz} preload={index < 3} />
