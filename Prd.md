@@ -136,6 +136,7 @@ Sitenin tüm renkleri 60-30-10 kuralına göre dağıtılmalı. Bu renkler sabit
 
 - Bu renkler Tailwind yapılandırmasında (ör. `background`, `surface`, `accent`, `text-primary`, `text-secondary` gibi anlamlı isimlerle) tanımlanmalı ve kod içinde doğrudan hex değeri yazmak yerine bu isimler kullanılmalı
 - Vurgu rengi `#6366F1` sayfanın yaklaşık %10'unu geçmemeli; her yere kullanılırsa etkisini kaybeder
+- **Açık vurgu tonu `#818CF8` (`accent-soft`):** `#6366F1` küçük yazılarda yeterli kontrast sağlamadığı için (kart üstünde 3.2:1) linkler, aktif sekme yazısı gibi küçük vurgu **yazıları** bu tonla yazılır (arka planda 6.6:1, kart üstünde 4.7:1). Buton dolguları, parlamalar ve ikonlar `#6366F1` kalır. Paletin tek istisnasıdır.
 - Hata, başarı ve uyarı mesajları için gerekirse ek durum renkleri (kırmızı, yeşil, sarı) sadece bu amaçla ve az miktarda kullanılabilir
 
 ### 8.2 Görsel Efektler ve Düzen

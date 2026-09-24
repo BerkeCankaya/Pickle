@@ -1,3 +1,78 @@
 @import "tailwindcss";
 
-/* Renkler ve fontlar 2. aşamada (Tasarım sistemi) buraya @theme ile eklenecek. */
+/*
+ * Pickle tasarım tokenları. Kurallar: design-system/MASTER.md
+ * Renkler Prd.md 8.1'deki sabit paletten gelir; kodda hex yerine bu isimler kullanılır.
+ */
+@theme {
+  /* Yüzeyler (60-30) */
+  --color-background: #090a0f;
+  --color-surface: #242656;
+
+  /* Vurgu (10) */
+  --color-accent: #6366f1;
+  --color-accent-soft: #818cf8; /* sadece küçük vurgu yazıları: linkler, aktif sekme */
+
+  /* Metin: text-primary, text-secondary (bg-primary / bg-secondary kullanılmaz) */
+  --color-primary: #f1f5f9;
+  --color-secondary: #94a3b8;
+
+  /* Durum renkleri: sadece hata/başarı/uyarı mesajları için, az miktarda */
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+
+  /* Fontlar (layout.tsx'te next/font ile yüklenir) */
+  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+
+  /* Köşeler: bileşen hiyerarşisine göre farklı */
+  --radius-field: 0.75rem; /* input, textarea */
+  --radius-card: 1.25rem; /* kartlar, paneller */
+
+  /* Neon parlama */
+  --shadow-glow-sm:
+    0 0 0 1px color-mix(in oklab, var(--color-accent) 40%, transparent),
+    0 0 16px -4px color-mix(in oklab, var(--color-accent) 50%, transparent);
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--color-accent) 70%, transparent),
+    0 0 28px -4px color-mix(in oklab, var(--color-accent) 70%, transparent);
+  --shadow-glow-lg:
+    0 0 0 2px var(--color-accent),
+    0 0 48px -6px color-mix(in oklab, var(--color-accent) 85%, transparent);
+
+  /* Hareket eğrileri */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html {
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  touch-action: manipulation;
+}
+
+/* Hareket azaltma tercihine saygı */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
