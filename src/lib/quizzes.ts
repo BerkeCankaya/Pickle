@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { mediaPublicUrl } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
 import type { CategoryId, Quiz, QuizOption } from "@/types/quiz";
 
@@ -41,7 +42,7 @@ export async function listQuizzes({ tab, category, query, limit }: ListQuizzesOp
     title: row.title,
     description: row.description,
     category: row.category as CategoryId,
-    coverUrl: row.cover_url ?? null,
+    coverUrl: mediaPublicUrl(row.cover_url ?? null),
     status: "published",
     playCount: row.play_count,
     recentPlayCount: row.recent_play_count,
@@ -76,7 +77,7 @@ export const getQuiz = cache(async (id: string): Promise<Quiz | null> => {
     title: data.title,
     description: data.description,
     category: data.category as CategoryId,
-    coverUrl: data.cover_url,
+    coverUrl: mediaPublicUrl(data.cover_url),
     status: data.status,
     playCount: data.play_count,
     // Sadece ana sayfadaki "Popüler" sıralamasında kullanılır.
@@ -100,7 +101,7 @@ export const getQuizOptions = cache(async (quizId: string): Promise<QuizOption[]
     id: row.id,
     quizId: row.quiz_id,
     name: row.name,
-    mediaUrl: row.media_url,
+    mediaUrl: mediaPublicUrl(row.media_url),
     mediaType: row.media_type,
     wins: row.wins,
     losses: row.losses,

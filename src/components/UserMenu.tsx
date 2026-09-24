@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDownIcon, LogOutIcon, UserIcon } from "@/components/icons";
+import { ChevronDownIcon, ImageIcon, LogOutIcon, UserIcon } from "@/components/icons";
 import { buttonStyles } from "@/components/ui/Button";
 import { signOut } from "@/lib/auth/actions";
 import { getCurrentProfile, isProfileComplete } from "@/lib/auth/session";
@@ -51,6 +51,12 @@ export async function UserMenu() {
           <Link href="/welcome" className={itemStyle}>
             <span className="size-2 rounded-full bg-warning" aria-hidden="true" />
             Profilini tamamla
+          </Link>
+        )}
+        {complete && (
+          <Link href="/my-quizzes" className={itemStyle}>
+            <ImageIcon className="size-4" />
+            Quizlerim
           </Link>
         )}
         <form action={signOut}>

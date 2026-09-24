@@ -22,7 +22,6 @@ export function SiteHeader() {
           </Suspense>
         </div>
 
-        {/* /create sayfası 6. aşamada eklenecek. */}
         <Link href="/create" className={buttonStyles({ variant: "secondary", size: "sm" })}>
           <PlusIcon className="size-4" />
           Quiz oluştur

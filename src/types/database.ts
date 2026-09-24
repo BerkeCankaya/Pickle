@@ -281,6 +281,16 @@ export type Database = {
     }
     Functions: {
       complete_profile: { Args: { p_username: string }; Returns: undefined }
+      create_quiz: {
+        Args: {
+          p_category: string
+          p_cover_path: string | null
+          p_description: string
+          p_options: Json
+          p_title: string
+        }
+        Returns: string
+      }
       get_my_profile: {
         Args: never
         Returns: {
