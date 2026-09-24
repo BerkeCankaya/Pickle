@@ -142,50 +142,46 @@ export function GamePlayer({ quiz, options, requestedSize }: GamePlayerProps) {
         </div>
       </header>
 
-      <main className="relative mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col p-1 sm:p-2 md:flex-row">
+      <main className="relative flex min-h-0 flex-1 flex-col gap-3 p-3 sm:gap-4 sm:p-4 md:flex-row">
         {match.map((optionId, index) => {
           const option = optionsById.get(optionId);
           if (!option) return null;
           const state = pickedId === null ? "idle" : pickedId === optionId ? "picked" : "dropped";
           return (
-            // Her seçenek kendi yarısını, kenarlarda biraz boşluk bırakarak doldurur.
-            <div key={`${game.results.length}-${optionId}`} className="flex min-h-0 flex-1 p-2 sm:p-4 lg:p-6">
-              <button
-                type="button"
-                onClick={() => pick(optionId)}
-                disabled={pickedId !== null}
-                aria-label={`${option.name} seç`}
-                aria-keyshortcuts={index === 0 ? "ArrowLeft 1" : "ArrowRight 2"}
-                className={cn(
-                  "flex min-h-0 flex-1 animate-pop-in cursor-pointer flex-col overflow-hidden rounded-card bg-surface ring-1 ring-accent/20",
-                  "transition-[translate,scale,opacity,box-shadow] duration-300 ease-spring",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft",
-                  "disabled:cursor-default",
-                  state === "idle" && "hover:shadow-glow md:hover:-translate-y-1 active:scale-[0.98]",
-                  state === "picked" && "z-10 scale-[1.03] shadow-glow-lg",
-                  state === "dropped" && "scale-95 opacity-30",
-                )}
-              >
-                <span className="relative block min-h-0 flex-1">
-                  <MediaImage
-                    src={option.mediaUrl}
-                    alt=""
-                    mediaType={option.mediaType}
-                    sizes="(min-width: 1152px) 576px, (min-width: 768px) 50vw, 100vw"
-                    loading="eager"
-                  />
-                </span>
-                <span className="shrink-0 px-3 py-2.5 text-center font-display text-base font-semibold text-balance sm:text-lg">
-                  {option.name}
-                </span>
-              </button>
-            </div>
+            <button
+              key={`${game.results.length}-${optionId}`}
+              type="button"
+              onClick={() => pick(optionId)}
+              disabled={pickedId !== null}
+              aria-label={`${option.name} seç`}
+              aria-keyshortcuts={index === 0 ? "ArrowLeft 1" : "ArrowRight 2"}
+              className={cn(
+                "group relative min-h-0 flex-1 animate-pop-in cursor-pointer overflow-hidden rounded-card bg-surface ring-1 ring-accent/20",
+                "transition-[translate,scale,opacity,box-shadow] duration-300 ease-spring",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft",
+                "disabled:cursor-default",
+                state === "idle" && "hover:shadow-glow md:hover:-translate-y-1 active:scale-[0.98]",
+                state === "picked" && "z-10 scale-[1.03] shadow-glow-lg",
+                state === "dropped" && "scale-95 opacity-30",
+              )}
+            >
+              <MediaImage
+                src={option.mediaUrl}
+                alt=""
+                mediaType={option.mediaType}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                loading="eager"
+              />
+              <span className="absolute inset-x-3 bottom-3 rounded-field bg-background/80 px-4 py-3 text-center font-display text-base font-semibold text-balance backdrop-blur sm:text-xl">
+                {option.name}
+              </span>
+            </button>
           );
         })}
 
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 z-20 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-background font-display text-sm font-bold shadow-glow ring-2 ring-accent sm:size-12"
+          className="pointer-events-none absolute top-1/2 left-1/2 z-20 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-background font-display text-base font-bold shadow-glow ring-2 ring-accent sm:size-16 sm:text-lg"
         >
           VS
         </span>
@@ -202,7 +198,7 @@ export function GamePlayer({ quiz, options, requestedSize }: GamePlayerProps) {
                   src={option.mediaUrl}
                   alt=""
                   mediaType={option.mediaType}
-                  sizes="(min-width: 1152px) 576px, (min-width: 768px) 50vw, 100vw"
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   loading="eager"
                 />
               </div>
