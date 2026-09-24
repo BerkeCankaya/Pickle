@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { PlusIcon, UserIcon } from "@/components/icons";
+import { PlusIcon } from "@/components/icons";
 import { SearchForm } from "@/components/SearchForm";
 import { buttonStyles } from "@/components/ui/Button";
+import { UserMenu } from "@/components/UserMenu";
 
 export function SiteHeader() {
   return (
@@ -21,19 +22,14 @@ export function SiteHeader() {
           </Suspense>
         </div>
 
-        {/* 6. aşamada /create, 4. aşamada /login sayfaları eklenecek. */}
+        {/* /create sayfası 6. aşamada eklenecek. */}
         <Link href="/create" className={buttonStyles({ variant: "secondary", size: "sm" })}>
           <PlusIcon className="size-4" />
           Quiz oluştur
         </Link>
-        <Link
-          href="/login"
-          aria-label="Giriş yap"
-          className={buttonStyles({ variant: "ghost", size: "sm", className: "px-3 sm:px-4" })}
-        >
-          <UserIcon className="size-5" />
-          <span className="hidden sm:inline">Giriş yap</span>
-        </Link>
+        <Suspense fallback={<div className="h-11 w-11 sm:w-28" />}>
+          <UserMenu />
+        </Suspense>
       </div>
     </header>
   );
