@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FormAlert } from "@/components/auth/FormAlert";
 import { MediaImage } from "@/components/MediaImage";
 import { ResultWinnerLoader } from "@/components/result/ResultWinnerLoader";
 import { buttonStyles } from "@/components/ui/Button";
@@ -17,6 +18,7 @@ export default async function ResultPage(props: PageProps<"/quiz/[id]/result">) 
   const quiz = await getQuiz(id);
   if (!quiz) notFound();
   const options = await getQuizOptions(quiz.id);
+  const rateLimited = (await props.searchParams).kayit === "sinir";
 
   const ranking = options
     .map((option) => ({ ...option, rate: winRate(option.wins, option.losses) }))
@@ -28,6 +30,13 @@ export default async function ResultPage(props: PageProps<"/quiz/[id]/result">) 
         quizId={quiz.id}
         options={options.map(({ id, name, mediaUrl, mediaType }) => ({ id, name, mediaUrl, mediaType }))}
       />
+
+      {rateLimited && (
+        <FormAlert tone="info">
+          Kısa sürede çok fazla oyun bitirdin. Bu sonuç istatistiklere eklenmedi; biraz sonra tekrar oynarsan
+          sayılacak.
+        </FormAlert>
+      )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <Link href={`/quiz/${quiz.id}`} className={buttonStyles({ size: "lg" })}>

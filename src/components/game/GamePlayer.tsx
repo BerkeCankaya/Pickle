@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@/components/icons";
 import { MediaImage } from "@/components/MediaImage";
 import { cn } from "@/lib/cn";
+import { recordPlay } from "@/lib/game/record";
 import { clearGame, loadGame, saveGame, saveResult } from "@/lib/game/storage";
 import {
   availableSizes,
@@ -49,6 +50,7 @@ export function GamePlayer({ quiz, options, requestedSize }: GamePlayerProps) {
     startingState(quiz, options.map((option) => option.id), requestedSize),
   );
   const [pickedId, setPickedId] = useState<string | null>(null);
+  const [finishing, setFinishing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const match = currentMatch(game);
@@ -69,17 +71,19 @@ export function GamePlayer({ quiz, options, requestedSize }: GamePlayerProps) {
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     timer.current = setTimeout(
-      () => {
+      async () => {
         const next = choose(game, optionId);
         if (next.championId) {
+          setFinishing(true);
           saveResult(quiz.id, {
             championId: next.championId,
             size: next.size,
             finishedAt: new Date().toISOString(),
           });
           clearGame(quiz.id);
-          // 5. aşamada sonuç (next.results) burada sunucuya gönderilecek.
-          router.replace(`/quiz/${quiz.id}/result`);
+          // Sonuç sayfası güncel istatistikleri göstersin diye önce kayıt bitsin.
+          const outcome = await recordPlay(next);
+          router.replace(`/quiz/${quiz.id}/result${outcome === "rate_limited" ? "?kayit=sinir" : ""}`);
           return;
         }
         setGame(next);
@@ -100,10 +104,10 @@ export function GamePlayer({ quiz, options, requestedSize }: GamePlayerProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
-  if (!match) {
+  if (!match || finishing) {
     return (
       <div className="flex min-h-dvh items-center justify-center text-secondary" role="status">
-        Sonuç hazırlanıyor…
+        Sonuç kaydediliyor…
       </div>
     );
   }

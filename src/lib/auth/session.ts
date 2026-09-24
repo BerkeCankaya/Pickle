@@ -18,13 +18,7 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   const { data: auth } = await supabase.auth.getClaims();
   if (!auth?.claims) return null;
 
-  const { data } = await supabase.rpc("get_my_profile").maybeSingle<{
-    id: string;
-    username: string | null;
-    role: "user" | "admin";
-    is_banned: boolean;
-    terms_accepted_at: string | null;
-  }>();
+  const { data } = await supabase.rpc("get_my_profile").maybeSingle();
   if (!data) return null;
 
   return {
