@@ -6,7 +6,7 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap select-none cursor-pointer " +
-  "transition-[transform,box-shadow,background-color,color] duration-200 ease-out-soft " +
+  "transition-[translate,scale,box-shadow,background-color,color] duration-200 ease-out-soft " +
   "active:scale-[0.97] active:duration-100 " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-soft " +
   "disabled:pointer-events-none disabled:opacity-50";

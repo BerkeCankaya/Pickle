@@ -66,6 +66,7 @@ Kodda hex yazılmaz, yalnızca token isimleri kullanılır. Durum rengi taşıya
 | Çıkış animasyonları | girişin ~%65'i | `ease-out-soft` |
 
 - Sadece `transform` ve `opacity` (ve gölge) animasyonu; genişlik/yükseklik animasyonu yok.
+- Dikkat: Tailwind v4'te `scale-*` ve `translate-*` ayrı CSS özellikleri kullanır. Geçiş yazarken `transition-[transform]` değil `transition-[translate,scale,...]` yazılır, yoksa animasyon çalışmaz.
 - Animasyonlar kullanıcıyı engellemez, her zaman kesilebilir.
 - Kendiliğinden oynayan hareket az: sayfa başına en fazla 1–2 öğe. Büyük an oyun seçimi ve kazanan kutlamasıdır.
 - `prefers-reduced-motion` açıksa animasyonlar kapanır (globals.css'te genel kural).
