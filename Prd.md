@@ -53,7 +53,7 @@ Tüm veritabanı tablolarında Row Level Security (RLS) açık olmalı ve kurall
 - "Tekrar Oyna", "Başka Quizler" butonları
 
 ### 4.5 Quiz Oluşturma (`/create`) – sadece giriş yapmış kullanıcılar
-- Başlık (zorunlu, en fazla 80 karakter), açıklama (isteğe bağlı, en fazla 300 karakter), kategori seçimi
+- Başlık (zorunlu, en fazla 50 karakter; ana sayfa kartlarında en fazla 2 satır görünür, sığmazsa "…" ile kesilir), açıklama (isteğe bağlı, en fazla 300 karakter), kategori seçimi
 - Kapak görseli yükleme (boş bırakılırsa ilk seçenek kapak olur)
 - Seçenek ekleme: toplu resim/GIF yükleme (sürükle-bırak destekli), her seçeneğe bir isim verme
 - Seçenek sayısı en az 8, en fazla 64 olmalı

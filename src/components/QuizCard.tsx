@@ -24,7 +24,10 @@ export function QuizCard({ quiz, preload = false }: { quiz: Quiz; preload?: bool
           </span>
         </div>
         <div className="flex flex-1 flex-col gap-3 p-4">
-          <h3 className="font-display text-base leading-snug font-semibold text-balance">{quiz.title}</h3>
+          {/* Başlık her kartta tam 2 satır yer kaplar; tüm kartlar aynı yükseklikte kalır. */}
+          <h3 title={quiz.title} className="line-clamp-2 h-[2lh] font-display text-base leading-snug font-semibold text-balance">
+            {quiz.title}
+          </h3>
           <p className="mt-auto flex gap-4 text-sm text-secondary">
             <span className="inline-flex items-center gap-1.5">
               <PlayIcon className="size-4" />

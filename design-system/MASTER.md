@@ -83,12 +83,13 @@ Kodda hex yazılmaz, yalnızca token isimleri kullanılır. Durum rengi taşıya
 ### Card
 - `bg-surface rounded-card ring-1 ring-accent/20`.
 - `interactive`: hover/odakta `shadow-glow` + 4px yükselme. Sadece tıklanabilir kartlarda.
+- Quiz kartı başlığı her zaman tam 2 satır yer kaplar (`line-clamp-2 h-[2lh]`); tüm kartlar aynı yükseklikte olur. Başlık sınırı 50 karakter.
 
 ### Input / Textarea
 - Görünür etiket zorunlu (placeholder etiket yerine geçmez). Zorunlu alanlarda `*`.
 - Yardım metni veya hata alanın hemen altında, `aria-describedby` ile bağlı.
 - Hata: `ring-danger` + kırmızı açıklayıcı metin; ne olduğunu ve nasıl düzeltileceğini söyler.
-- `showCount` + `maxLength` ile karakter sayacı (başlık 80, açıklama 300).
+- `showCount` + `maxLength` ile karakter sayacı (başlık 50, açıklama 300).
 - Yükseklik 48px, yazı 16px (iOS otomatik yakınlaştırmayı önler).
 
 ## Erişilebilirlik kontrol listesi
