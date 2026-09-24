@@ -74,7 +74,7 @@ Kodda hex yazılmaz, yalnızca token isimleri kullanılır. Durum rengi taşıya
 
 ### Button
 - Türler: `primary` (sayfada tek ana eylem), `secondary`, `ghost` (düşük öncelik: şikayet, iptal).
-- Boyutlar: `sm` 44px, `md` 48px, `lg` 56px yükseklik (hepsi ≥44px dokunma hedefi).
+- Boyutlar: `sm` 44px, `md` 48px, `lg` 52px yükseklik (hepsi ≥44px dokunma hedefi).
 - `loading` durumunda dönen gösterge + pasif. `disabled` %50 opaklık.
 - Link olarak kullanmak için `buttonStyles()` fonksiyonu.
 - Yazı eylemi söyler: "Oyna", "Quiz oluştur", "Yayınla" (belirsiz "Gönder" değil).
