@@ -7,32 +7,40 @@ import { ImageIcon, PlusIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import { cn } from "@/lib/cn";
+import { UploadError, removeMedia, runWithLimit, uploadMedia } from "@/lib/create/files";
+import { importImageFromUrl } from "@/lib/create/import-url";
 import {
   ACCEPT_ATTR,
   MAX_OPTIONS,
   MIN_OPTIONS,
   OPTION_NAME_MAX,
-  UploadError,
   checkFile,
   createErrorMessage,
   nameFromFile,
-  removeMedia,
-  runWithLimit,
-  uploadMedia,
-} from "@/lib/create/files";
+} from "@/lib/create/rules";
 import { createClient } from "@/lib/supabase/client";
 import { CATEGORIES } from "@/types/quiz";
 
 const TITLE_MAX = 50;
 const DESCRIPTION_MAX = 300;
 const UPLOAD_CONCURRENCY = 4;
+const IMPORT_CONCURRENCY = 3;
 
+/**
+ * Bilgisayardan seçilen dosyalar yayınlarken yüklenir (file dolu, path boş).
+ * Bağlantıdan eklenenler sunucu tarafından hemen depoya kopyalanır (path dolu).
+ */
 type DraftOption = {
   key: string;
-  file: File;
+  file: File | null;
+  path: string | null;
   previewUrl: string;
   name: string;
 };
+
+function releasePreview(option: { file: File | null; previewUrl: string }) {
+  if (option.file) URL.revokeObjectURL(option.previewUrl);
+}
 
 type Cover = { file: File; previewUrl: string };
 
@@ -56,6 +64,8 @@ export function CreateQuizForm({ userId }: { userId: string }) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
+  const [urlText, setUrlText] = useState("");
+  const [importing, setImporting] = useState<Progress | null>(null);
 
   const publishing = progress !== null;
   const hasDraft = Boolean(title || description || cover || options.length);
@@ -67,7 +77,7 @@ export function CreateQuizForm({ userId }: { userId: string }) {
   }, [options, cover]);
   useEffect(
     () => () => {
-      latest.current.options.forEach((option) => URL.revokeObjectURL(option.previewUrl));
+      latest.current.options.forEach(releasePreview);
       if (latest.current.cover) URL.revokeObjectURL(latest.current.cover.previewUrl);
     },
     [],
@@ -99,6 +109,7 @@ export function CreateQuizForm({ userId }: { userId: string }) {
       added.push({
         key: crypto.randomUUID(),
         file,
+        path: null,
         previewUrl: URL.createObjectURL(file),
         name: nameFromFile(file.name),
       });
@@ -109,12 +120,54 @@ export function CreateQuizForm({ userId }: { userId: string }) {
     if (added.length) setFieldErrors((current) => ({ ...current, options: undefined }));
   }
 
+  async function addFromUrls() {
+    const urls = [...new Set(urlText.split(/\s+/).filter(Boolean))];
+    if (urls.length === 0) return;
+
+    const room = MAX_OPTIONS - options.length;
+    const errors: string[] = [];
+    if (urls.length > room) {
+      errors.push(`En fazla ${MAX_OPTIONS} seçenek ekleyebilirsin; fazla bağlantılar eklenmedi.`);
+    }
+    const accepted = urls.slice(0, Math.max(room, 0));
+    const failed: string[] = [];
+    setImporting({ done: 0, total: accepted.length });
+
+    await runWithLimit(
+      accepted.map((url) => async () => {
+        const result = await importImageFromUrl(url).catch(() => null);
+        if (result?.ok) {
+          const option: DraftOption = {
+            key: crypto.randomUUID(),
+            file: null,
+            path: result.path,
+            previewUrl: result.previewUrl,
+            name: result.name,
+          };
+          setOptions((current) => [...current, option]);
+        } else {
+          failed.push(url);
+          errors.push(`${url}: ${result?.error ?? "Eklenemedi."}`);
+        }
+        setImporting((current) => current && { ...current, done: current.done + 1 });
+      }),
+      IMPORT_CONCURRENCY,
+    );
+
+    setImporting(null);
+    // Eklenemeyen bağlantılar kutuda kalsın; düzeltip tekrar denenebilsin.
+    setUrlText(failed.join("\n"));
+    setFileErrors(errors);
+    if (failed.length < accepted.length) setFieldErrors((current) => ({ ...current, options: undefined }));
+  }
+
   function removeOption(key: string) {
-    setOptions((current) => {
-      const target = current.find((option) => option.key === key);
-      if (target) URL.revokeObjectURL(target.previewUrl);
-      return current.filter((option) => option.key !== key);
-    });
+    const target = options.find((option) => option.key === key);
+    if (!target) return;
+    releasePreview(target);
+    // Bağlantıdan eklenen görsel depoya kopyalanmıştı; artık gerekmiyor.
+    if (target.path) removeMedia([target.path]).catch(() => {});
+    setOptions((current) => current.filter((option) => option.key !== key));
   }
 
   function renameOption(key: string, name: string) {
@@ -163,7 +216,7 @@ export function CreateQuizForm({ userId }: { userId: string }) {
       return;
     }
 
-    const files = [...(cover ? [cover.file] : []), ...options.map((option) => option.file)];
+    const files = [...(cover ? [cover.file] : []), ...options.flatMap((option) => (option.file ? [option.file] : []))];
     const uploaded: string[] = [];
     setProgress({ done: 0, total: files.length });
 
@@ -179,7 +232,9 @@ export function CreateQuizForm({ userId }: { userId: string }) {
       );
 
       const coverPath = cover ? paths[0] : null;
-      const optionPaths = cover ? paths.slice(1) : paths;
+      const filePaths = cover ? paths.slice(1) : paths;
+      let nextFilePath = 0;
+      const optionPaths = options.map((option) => option.path ?? filePaths[nextFilePath++]);
 
       const { data: quizId, error } = await createClient().rpc("create_quiz", {
         p_title: title.trim(),
@@ -356,6 +411,37 @@ export function CreateQuizForm({ userId }: { userId: string }) {
           />
         </div>
 
+        <div className="flex flex-col gap-3">
+          <Textarea
+            label="Veya resim bağlantılarını yapıştır"
+            rows={3}
+            value={urlText}
+            onChange={(event) => setUrlText(event.target.value)}
+            disabled={importing !== null}
+            placeholder={"https://ornek.com/lahmacun.jpg\nhttps://ornek.com/kokorec.png"}
+            hint="Her satıra bir bağlantı. Resimler bizim sunucumuza kopyalanır; asıl site silse de quizin bozulmaz."
+            spellCheck={false}
+            className="font-mono text-sm"
+          />
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={addFromUrls}
+              loading={importing !== null}
+              disabled={!urlText.trim()}
+            >
+              <PlusIcon className="size-4" />
+              Bağlantıları ekle
+            </Button>
+            {importing && (
+              <p role="status" className="text-sm tabular-nums text-secondary">
+                Ekleniyor: {importing.done}/{importing.total}
+              </p>
+            )}
+          </div>
+        </div>
+
         {fieldErrors.options && <p className="text-sm text-danger">{fieldErrors.options}</p>}
         {fileErrors.length > 0 && (
           <FormAlert tone="error">
@@ -429,7 +515,7 @@ export function CreateQuizForm({ userId }: { userId: string }) {
             </div>
           </div>
         )}
-        <Button type="submit" size="lg" loading={publishing} className="self-start">
+        <Button type="submit" size="lg" loading={publishing} disabled={importing !== null} className="self-start">
           Yayınla
         </Button>
         <p className="text-sm text-secondary">
