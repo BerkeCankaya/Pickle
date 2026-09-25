@@ -54,7 +54,17 @@ Tüm veritabanı tablolarında Row Level Security (RLS) açık olmalı ve kurall
 
 ### 4.5 Quiz Oluşturma (`/create`) – sadece giriş yapmış kullanıcılar
 - Başlık (zorunlu, en fazla 50 karakter; ana sayfa kartlarında en fazla 2 satır görünür, sığmazsa "…" ile kesilir), açıklama (isteğe bağlı, en fazla 300 karakter), kategori seçimi
-- Kapak görseli yükleme (boş bırakılırsa ilk seçenek kapak olur)
+- Kapak görseli yükleme (boş bırakılırsa otomatik "VS" kapak oluşturulur, bkz. aşağısı)
+- **Otomatik "VS" kapak:** Kullanıcı kapak yüklemezse, quizin seçeneklerinden rastgele 4 tanesi seçilerek otomatik kapak oluşturulur:
+  - Kapak 2x2 ızgaraya bölünür; seçilen 4 resim sol üst, sağ üst, sol alt ve sağ alt köşelere yerleştirilir
+  - Her resim kendi karesini tamamen dolduracak şekilde ortalanıp kırpılır (resimler esnetilmez)
+  - Tam ortada, dört resmin birleştiği noktada büyük ve dikkat çekici bir "VS" yazısı bulunur; vurgu rengi #6366F1 ile neon parlama (glow) efekti taşır ve okunabilmesi için arkasında koyu yarı saydam bir daire veya rozet olur
+  - Resimlerin arasında ince ayırıcı çizgiler olabilir
+  - 4 resim, quiz yayınlandığında bir kez rastgele seçilir ve kaydedilir; sayfa her yenilendiğinde değişmez
+  - Quiz oluşturulurken (yayınlamadan önce) seçilen resimlerden biri silinirse yerine yeni bir rastgele seçenek atanır. Kullanıcı isterse "Karıştır" butonuyla farklı 4 resim seçtirebilir
+  - GIF seçenekler kapakta durağan gösterilir (ilk karesi), sadece kartın üzerine gelindiğinde oynar
+  - Kapak bir resim dosyası olarak üretilmek zorunda değildir; kart bileşeni içinde 4 resim ve "VS" yazısı ile arayüzde oluşturulabilir. Bu yöntem daha hafif ve esnektir
+  - Aynı kapak düzeni ana sayfa kartlarında ve quiz detay sayfasında kullanılır
 - Seçenek ekleme: toplu resim/GIF yükleme (sürükle-bırak destekli), her seçeneğe bir isim verme
 - Seçenek sayısı en az 8, en fazla 64 olmalı
 - İzin verilen dosya türleri: JPG, PNG, WEBP, GIF. Resimler için en fazla 5 MB, GIF'ler için en fazla 10 MB
